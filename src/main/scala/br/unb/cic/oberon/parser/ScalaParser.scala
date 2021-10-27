@@ -425,11 +425,6 @@ class ParserVisitor {
       stmt = ReadIntStmt(varName)
     }
 
-    override def visitReadSetStmt(ctx: OberonParser.ReadSetStmtContext): Unit = {
-      val varName = ctx.`var`.getText
-      stmt = ReadSetStmt(varName)
-    }
-
     override def visitWriteStmt(ctx: OberonParser.WriteStmtContext): Unit = {
       val visitor = new ExpressionVisitor()
       ctx.expression().accept(visitor)
