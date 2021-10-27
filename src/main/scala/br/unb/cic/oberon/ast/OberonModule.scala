@@ -177,7 +177,6 @@ case class ReadLongRealStmt(varName: String) extends Statement
 case class ReadRealStmt(varName: String) extends Statement
 case class ReadLongIntStmt(varName: String) extends Statement
 case class ReadIntStmt(varName: String) extends Statement
-case class ReadSetStmt(varName: String) extends Statement
 case class ReadShortIntStmt(varName: String) extends Statement
 case class ReadCharStmt(varName: String) extends Statement
 case class WriteStmt(expression: Expression) extends Statement
