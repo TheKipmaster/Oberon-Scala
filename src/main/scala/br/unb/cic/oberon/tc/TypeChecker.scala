@@ -17,7 +17,7 @@ class ExpressionTypeVisitor(val typeChecker: TypeChecker) extends OberonVisitorA
     case RealValue(_) => Some(RealType)
     case CharValue(_) => Some(CharacterType)
     case BoolValue(_) => Some(BooleanType)
-    case SetValue(value) => computeSetElementType(value)
+    case SetValue(elements) => computeSetElementType(elements)
     case Undef() => None
     case VarExpression(name) => if(typeChecker.env.lookup(name).isDefined) typeChecker.env.lookup(name).get.accept(this) else None
     case EQExpression(left, right) => computeBinExpressionType(left, right, IntegerType, BooleanType)
@@ -52,21 +52,17 @@ class ExpressionTypeVisitor(val typeChecker: TypeChecker) extends OberonVisitorA
     }
   }
 
-  def computeSetElementType(value: Set[Element]) : Option[Type] = {
-    value.foreach(element => element match {
+  def computeSetElementType(elements: Set[Element]) : Option[Type] = {
+    elements.foreach {
       case SingleBasedElement(exp) =>
-        if(exp.accept(this).contains(IntegerType)) {
-        } else {
-          None
+        if (!exp.accept(this).contains(IntegerType)) {
+          return None
         }
       case RangeBasedElement(left, right) =>
-        if(computeBinExpressionType(left, right, IntegerType, IntegerType).contains(IntegerType)){
-        } else {
-          None
+        if (!computeBinExpressionType(left, right, IntegerType, IntegerType).contains(IntegerType)) {
+          return None
         }
-    })
-
-    // If gets here then theres only integertype elements
+    }
     Some(SetType)
   }
 
@@ -95,11 +91,6 @@ class TypeChecker extends OberonVisitorAdapter {
     else List()
   }
 
-  override def visit(element: Element) = element match {
-    case SingleBasedElement(exp) => if(exp.accept(expVisitor).isDefined) List() else List((element, s"Element $element is ill typed"))
-
-  }
-
   override def visit(stmt: Statement) = stmt match {
     case AssignmentStmt(_, _) => visitAssignment(stmt)
     case IfElseStmt(_, _, _) => visitIfElseStmt(stmt)
@@ -119,7 +110,6 @@ class TypeChecker extends OberonVisitorAdapter {
     case ReadIntStmt(v) => if(env.lookup(v).isDefined) List() else List((stmt, s"Variable $v not declared."))
     case ReadShortIntStmt(v) => if(env.lookup(v).isDefined) List() else List((stmt, s"Variable $v not declared."))
     case ReadCharStmt(v) => if(env.lookup(v).isDefined) List() else List((stmt, s"Variable $v not declared."))
-    case ReadSetStmt(v) => if(env.lookup(v).isDefined) List() else List((stmt, s"Variable $v not declared"))
     case WriteStmt(exp) => if(exp.accept(expVisitor).isDefined) List() else List((stmt, s"Expression $exp is ill typed."))
   }
 
