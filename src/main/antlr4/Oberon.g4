@@ -81,7 +81,6 @@ statement
  | 'readInt'        '(' var = Id ')'                                                                                          #ReadIntStmt
  | 'readChar'   '(' var = Id ')'                                                                                              #ReadCharStmt
  | 'readChar'   '(' var = Id ')'                                                                                              #ReadCharStmt
- | 'readSet'   '(' var = Id ')'                                                                                               #ReadSetStmt
  | 'write' '(' expression ')'                                                                                                 #WriteStmt
  | name = Id '(' arguments? ')'                                                                                               #ProcedureCall
  | 'IF' cond = expression 'THEN' thenStmt = statement ('ELSE' elseStmt = statement)? 'END'                                    #IfElseStmt
